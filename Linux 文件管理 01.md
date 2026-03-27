@@ -1,115 +1,132 @@
 # 文件管理
 
-- ls（英文全拼：list files）: 列出目录及文件名
-- cd（英文全拼：change directory）：切换目录
-- pwd（英文全拼：print work directory）：显示目前的目录
-- mkdir（英文全拼：make directory）：创建一个新的目录
-- rmdir（英文全拼：remove directory）：删除一个空的目录
-- cp（英文全拼：copy file）: 复制文件或目录
-- rm（英文全拼：remove）: 删除文件或目录
-- mv（英文全拼：move file）: 移动文件与目录，或修改文件与目录的名称
-- touch: 用于创建一个新的文件
+## 常用命令
 
-mkdir -p创建多层级目录  -v过程可视化
+- ls — list files：列出目录及文件名
+- cd — change directory：切换目录
+- pwd — print work directory：显示目前的目录
+- mkdir — make directory：创建新目录
+- rmdir — remove directory：删除空目录
+- cp — copy file：复制文件或目录
+- rm — remove：删除文件或目录
+- mv — move file：移动文件/目录或重命名
+- touch：创建新文件
+- cat：显示文本内容
+- less：分页浏览文件（支持翻页和搜索）
+- head：查看文件开头
+- tail：查看文件末尾
 
-cp -r递归持续复制 -v 过程可视化 
+## 常用选项与说明
 
-cp -rv install.log{,old}备份文件（终端输出 `'install.log' -> 'install.log-old'`）
+- mkdir -p：创建多层级目录
+- mkdir -v：过程可视化（显示创建过程）
+- cp -r：递归复制目录
+- cp -v：过程可视化（显示复制过程）
+- cp -rv：递归且可视化
+- cp -rv install.log{,old}：备份文件（终端示例输出：'install.log' -> 'install.log-old'）
+- mv：移动或重命名（二合一）
+- rm -f：强制删除
+- rm -r：递归删除目录与内容
+- rm -i：删除前询问（注意：禁止在任何服务器上执行 rm -rf /。）
 
-mv 是「移动」和「重命名」二合一的命令
+## cat / head / tail / less 示例
 
-rm -f 强制删除 -r 递归删除 -i 删除前询问（禁止在任何服务器上执行rm -rf /.）
+- cat -n file.txt：显示并编号所有行
+- cat -b file.txt：显示行号但不对空行编号
+- head -n N file.txt：显示前 N 行
+- head -v：显示文件名（当查看多个文件时）
+- head -q：静默模式（不显示文件名）
+- tail -f file.txt：循环读取文件末尾（常用于日志）
+- 示例：查看 anaconda-ks.cfg 从第 10 行开始到结尾
 
-cat用于打开文本并显示出来 -n显示行数 -b 显示行数但不显示空行
-
-less用于浏览文件，支持翻页和搜索
-
-head查看文件的开头部分的内容 -n 显示行数 -v 显示文件名 -q 显示隐藏文件名
-
-tail会把文本文件里的最尾部的内容显示在屏幕上-f 循环读取
-
-```shell
-# 查看文件anaconda-ks.cfg从第10行到结尾
-[root@localhost ~]# tail -n +10 anaconda-ks.cfg
+```bash
+tail -n +10 anaconda-ks.cfg
 ```
 
-grep针对文件内容进行过滤
+## grep 用法示例
 
-```shell
-# 在/etc/passwd的文件中找出有root的行
-[root@xwz ~]# grep 'root' /etc/passwd
-# 在/etc/passwd中找出root开头的行
-[root@xwz ~]# grep '^root' /etc/passwd
-# 在/etc/passwd中找出bash结尾的行
-[root@xwz ~]# grep 'bash$' /etc/passwd
+- 在 /etc/passwd 中找出包含 root 的行：
+
+```bash
+grep 'root' /etc/passwd
 ```
+
+- 找出以 root 开头的行：
+
+```bash
+grep '^root' /etc/passwd
+```
+
+- 找出以 bash 结尾的行：
+
+```bash
+grep 'bash$' /etc/passwd
+```
+
+
 
 ## **vim**
 
+### 模式概览
+
+- 命令模式（Normal）：默认模式，用于移动、删除、复制、替换等。
+- 输入模式（Insert）：插入文本（按 i、a、o 等进入）。
+- 末行模式（Ex）：以 : 开头输入命令（保存、退出、替换等）。
+
 ### 命令模式：
 
-1. 移动光标的方法hjkl，n+空格 移动到这行的第n个字符，0移到行首，$移到行末，G 移动到最后一行， nG移动到第n行，gg 移动到第一行（相当于1G），n+回车 向下移动n行
+#### 光标移动
 
-2. 文本搜索 /word 光标向下寻找 ?word光标向上寻找， n 重复上一次的查找动作， N 反向重复上一次的查找动作
+- h、j、k、l：左下上右
+- n + 空格：移动到本行第 n 个字符
+- 0：行首
+- $：行末
+- G：移动到最后一行
+- nG：移动到第 n 行
+- gg（等同于 1G）：移动到第一行
+- n + 回车：向下移动 n 行
 
-3. 批量替换  :范围s/要找的字符串/替换后的字符串/选项 例如 ：
+#### 文本搜索
 
-:5,10s/root/admin/g  第 5-10 行的所有 `root` 换成 `admin`（`g` = global，整行所有匹配都替换）
+- /word：向下查找 word
+- ?word：向上查找 word
+- n：重复上一次查找（同方向）
+- N：反向重复上一次查找
 
-:%s/root/admin/gc（% 等价于 1,$ 全文替换，但**每处匹配都提示确认**c = confirm）
+#### 批量替换
 
-替换第 1 行的 root 为 admin? (y/n/a/q/l/^E/^Y)
+- :范围s/要找的字符串/替换后的字符串/选项
+  - :5,10s/root/admin/g — 第 5-10 行的所有 `root` 替换为 `admin`（g = 全行所有匹配）
+  - :%s/root/admin/gc — 全文替换，但每处匹配都提示确认（c = confirm）
+    - 替换确认选项：y（替换当前） / n（不替换当前） / a（替换剩余全部） / q（退出） / l / ^E / ^Y
 
-- `y`：替换当前这一处；
-- `n`：不替换当前这一处；
-- `a`：替换所有剩余匹配（不用再逐个确认）；
-- `q`：退出替换，停止操作。
+#### 删除、复制、粘贴
 
-4. x:删除
+- x：删除当前字符（向后）
+- X：向前删除一个字符（退格）
+- dw：删除光标后的一个单词
+- dd：删除（剪切）当前整行
+- ndd：删除从当前行向下 n 行（例：20dd）
+- d1G：删除从当前行到第 1 行
+- dG：删除从当前行到最后一行
+- d$：删除光标处到行尾
+- d0：删除光标处到行首
+- yy：复制当前行
+- nyy：复制当前行向下 n 行（例：20yy）
+- y1G：复制从当前行到第一行
+- yG：复制从当前行到最后一行
+- yy$：复制从当前字符到行尾
+- yy0：复制从当前字符到行首
+- p：在光标下一行粘贴
+- P：在光标上一行粘贴
+- J：将下一行合并到本行（join）
 
-在一行字当中，x 为向后删除一个字符 (相当于 [del] 按键)， X 为向前删除一个字符(相当于 [backspace] 亦即是退格键)
+#### 更改与回退
 
-dw 删除光标后的一个单词
-
-dd 删除/剪切光标所在的那一整行(常用)
-
-ndd 删除/剪切光标所在的向下 n 行，例如 20dd 则是删除 20 行
-
-d1G 删除光标所在到第一行的所有数据
-
-dG 删除光标所在到最后一行的所有数据
-
-d$ 删除游标所在处，到该行的最后一个字符
-
-d0 删除光标所在处，到该行的最前面一个字符
-
-yy 复制游标所在的那一行
-
-nyy 复制光标所在的向下 n 行，例如 20yy 则是复制 20 行
-
-y1G 复制游标所在行到第一行的所有数据
-
-yG 复制游标所在行到最后一行的所有数据
-
-yy$ 复制光标所在的那个字符到该行行尾的所有数据
-
-yy0 复制光标所在的那个字符到该行行首的所有数据
-
-p 为将已复制的数据在光标下一行贴上
-
-P 贴在光标上一行
-
-J 将光标所在下一行的数据缩进到本行
-
-c （即change）删除加修改，删除后进入Insert模式
-
-u 复原前一个动作（好用）
-
-CTRL+r 重做前一个动作
-
-. 重复上一个动作
-
-### i：输入模式
+- c（change） ：删除并进入 Insert 模式以修改
+- u ：撤销上一个动作
+- Ctrl+r ：重做撤销的动作
+- . ：重复上一个动作
 
 
 
@@ -131,7 +148,7 @@ CTRL+r 重做前一个动作
 | `:n1,n2 w [filename]` | 将 n1 到 n2 的内容储存成 filename 这个文件。                 |
 | `:!command`           | 暂时离开 vi 到bash命令行下执行 command 的显示结果！例如 『:! ls -lh』即可在 vi 当中查看当前目录下文件的大小、权限，不用退出 Vim |
 
-**vim环境变量修改**
+### **vim环境变量修改**
 
 | 方法        | 含义                                               |
 | :---------- | :------------------------------------------------- |

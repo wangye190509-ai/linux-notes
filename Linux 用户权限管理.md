@@ -53,17 +53,57 @@ root:x:0:
 
 -n 修改组名，-g 修改组的GID，-o 允许重复使用GID
 
+- 修改fd组的名字为finance
+
+```shell
+[root@localhost ~]# groupmod -n finance fd
+[root@localhost ~]# tail -n 1 /etc/group
+finance:x:4000:
+```
+
 ## gpasswd
 
+gpasswd 是 Linux 下工作组文件 /etc/group 和 /etc/gshadow 管理工具，用于将一个用户添加到组或者从组中删除
+
 -a 添加用户到组，-d 从组删除用户
-
-
 
 ## useradd
 
 添加用户
 
- -c 指定一段注释，-d 到目录，-g 到组 ，-G 到附加组，-s 指定用户登录的shell （[root@localhost ~]# useradd -s /sbin/nologin user04 建立一个不给登录的用户）
+ -c 指定一段注释，-d 到目录，-g 到组 ，-G 到附加组，-s 指定用户登录的shell ，-r 创建系统用户（没有家目录）
+
+- 添加一般用户
+
+```shell
+[root@localhost ~]# useradd user01
+```
+
+- 为添加的用户指定相应的用户组
+
+```shell
+[root@localhost ~]# useradd -g root user02
+```
+
+- 为新添加的用户指定home目录
+
+```shell
+[root@localhost ~]# useradd -d /home/test user03
+```
+
+- 建立一个不给登录的系统用户
+
+```shell
+[root@localhost ~]# useradd -s /sbin/nologin -r user04
+```
+
+- 查看用户描述信息
+
+```bash
+[root@localhost ~]# useradd -c "this is python_developmer user" python-developmer
+[root@localhost ~]# cat /etc/passwd |grep python-developmer
+python-developmer:x:1005:1005:this is python_developmer user:/home/python-developmer:/bin/bash
+```
 
 ## userdel
 
@@ -71,7 +111,22 @@ root:x:0:
 
 ## usermod
 
--d 修改用户登录的目录，-u 修改uid
+-d 修改用户登录的目录，-u 修改uid， -m 移动旧的家目录到新的位置
+
+#### 移动用户家目录
+
+```shell
+[root@localhost ~]# usermod -d /mnt/mountpoint/user1 -m user1
+[root@localhost ~]# usermod -d /mnt/mountpoint/user2 -m user2
+```
+
+#### 参数说明：
+
+- `-d /mnt/mountpoint/user1`：设置新家目录路径
+- `-m`：**移动**旧家目录的内容到新位置
+- `user1`：要修改的用户名
+
+
 
 ## su
 
@@ -87,13 +142,31 @@ su 切换到root用户（保留当前环境），su - 切换到root并加载root
 
 修改用户密码
 
+**交互式**
+
+```shell
+[root@localhost ~]# passwd user1
+更改用户 user1 的密码 。
+新的密码：           # 需要手动输入
+重新输入新的密码：    # 需要再次输入
+passwd：所有的身份验证令牌已经成功更新。[root@localhost ~]# echo "123456" | passwd --stdin user1
+# 相当于自动输入了密码 "123456"
+
+[root@localhost ~]# echo "P@ssw0rd" | passwd --stdin user2
+# 自动设置密码为 P@ssw0rd
+```
+
+**非交互式**（用 --stdin）
+
 ```shell
 [root@localhost ~]# echo 123456 | passwd --stdin test01
 更改用户 test01 的密码 。
 passwd：所有的身份验证令牌已经成功更新。
 ```
 
-# login.defs文件
+
+
+## login.defs文件
 
 ```shell
 [root@localhost ~]# egrep -v '^[ ]*$|^#' /etc/login.defs

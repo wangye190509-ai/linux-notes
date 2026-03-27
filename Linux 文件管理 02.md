@@ -32,7 +32,7 @@ stat [选项]... 文件...
 
 ## 文件查找
 
-**find**
+### **find**
 
 ```shell
 find [路径] [选项] [查找条件 + 处理动作]
@@ -55,7 +55,7 @@ find [路径] [选项] [查找条件 + 处理动作]
 # [0-9]    任意一个数字
 ```
 
-## 处理动作
+### 处理动作
 
 -print 默认的处理动作
 
@@ -63,7 +63,7 @@ find [路径] [选项] [查找条件 + 处理动作]
 
 -delete 删除查找到的文件（-delete` 只能删文件 / 空目录，非空目录需用 `-exec rm -rf {} \;）
 
- -fls /path/to/filename 将查找到的文件长格式信息保存到指定文件夹
+ -fls  /path/to/filename 将查找到的文件长格式信息保存到指定文件夹
 
 ```bash
 find /etc -type d -perm 644 -fls /root/etc_dirs.txt
